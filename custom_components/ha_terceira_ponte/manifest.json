@@ -1,9 +1,12 @@
 {
   "domain": "ha_terceira_ponte",
   "name": "Terceira Ponte",
+  "codeowners": ["@chiconws"],
   "config_flow": true,
+  "documentation": "https://github.com/chiconws/ha-terceira-ponte",
   "integration_type": "service",
   "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/chiconws/ha-terceira-ponte/issues",
   "requirements": [],
   "single_config_entry": true,
   "version": "1.0.0"
