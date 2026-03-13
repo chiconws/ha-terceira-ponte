@@ -1,0 +1,28 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Terceira Ponte",
+        "description": "Create four camera entities from the public CETURB-ES cameras for Terceira Ponte."
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to reach the Terceira Ponte service.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "single_instance_allowed": "Only a single Terceira Ponte configuration is allowed."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Terceira Ponte options",
+        "description": "Lower value = fresher image. Higher value = fewer requests.",
+        "data": {
+          "cache_ttl_seconds": "Refresh image every"
+        }
+      }
+    }
+  }
+}

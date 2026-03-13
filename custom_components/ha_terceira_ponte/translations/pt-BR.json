@@ -1,0 +1,28 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Terceira Ponte",
+        "description": "Cria quatro entidades de câmera a partir das câmeras públicas da CETURB-ES para a Terceira Ponte."
+      }
+    },
+    "error": {
+      "cannot_connect": "Falha ao acessar o serviço da Terceira Ponte.",
+      "unknown": "Erro inesperado."
+    },
+    "abort": {
+      "single_instance_allowed": "Apenas uma configuração da Terceira Ponte é permitida."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções da Terceira Ponte",
+        "description": "Menor valor = imagem mais atual. Maior valor = menos requisições.",
+        "data": {
+          "cache_ttl_seconds": "Atualizar imagem a cada"
+        }
+      }
+    }
+  }
+}
