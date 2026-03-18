@@ -139,6 +139,68 @@ async def test_client_retries_when_image_returns_401() -> None:
 
 
 @pytest.mark.asyncio
+async def test_client_retries_when_image_returns_500() -> None:
+    """The client should retry transient server errors before succeeding."""
+    session = FakeSession()
+    token_url = "https://terceiraponte.ceturb.es.gov.br/api/auth/token"
+    image_url = "https://terceiraponte.ceturb.es.gov.br/api/imagem/Subida_Vix"
+
+    session.queue("GET", token_url, FakeResponse(status=200, json_data={"token": build_token(4070908800)}))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue(
+        "GET",
+        image_url,
+        FakeResponse(status=200, body=b"image-three", headers={"Content-Type": "image/jpeg"}),
+    )
+
+    client = TerceiraPonteClient(session, cache_ttl_seconds=10)
+    image = await client.async_get_camera_image("Subida_Vix")
+
+    assert image == b"image-three"
+    assert session.calls == [
+        ("GET", token_url),
+        ("GET", image_url),
+        ("GET", image_url),
+        ("GET", image_url),
+    ]
+
+
+@pytest.mark.asyncio
+async def test_client_returns_stale_cache_when_refresh_fails() -> None:
+    """The client should keep serving the last image when refresh fails."""
+    session = FakeSession()
+    token_url = "https://terceiraponte.ceturb.es.gov.br/api/auth/token"
+    image_url = "https://terceiraponte.ceturb.es.gov.br/api/imagem/Subida_Vix"
+
+    session.queue("GET", token_url, FakeResponse(status=200, json_data={"token": build_token(4070908800)}))
+    session.queue(
+        "GET",
+        image_url,
+        FakeResponse(status=200, body=b"image-one", headers={"Content-Type": "image/jpeg"}),
+    )
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+
+    client = TerceiraPonteClient(session, cache_ttl_seconds=10)
+    now = [100.0]
+    client._monotonic = lambda: now[0]  # type: ignore[method-assign]
+
+    first = await client.async_get_camera_image("Subida_Vix")
+    now[0] = 111.0
+    second = await client.async_get_camera_image("Subida_Vix")
+    state = client.get_camera_state("Subida_Vix")
+
+    assert first == b"image-one"
+    assert second == b"image-one"
+    assert state.available is True
+    assert state.bytes_size == len(b"image-one")
+    assert state.content_type == "image/jpeg"
+    assert state.last_error == "Image request failed with status 500: server error"
+
+
+@pytest.mark.asyncio
 async def test_client_marks_camera_unavailable_after_failed_fetch() -> None:
     """The camera should be marked unavailable when a fetch fails without cache."""
     session = FakeSession()
@@ -147,10 +209,12 @@ async def test_client_marks_camera_unavailable_after_failed_fetch() -> None:
 
     session.queue("GET", token_url, FakeResponse(status=200, json_data={"token": build_token(4070908800)}))
     session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
+    session.queue("GET", image_url, FakeResponse(status=500, text="server error"))
 
     client = TerceiraPonteClient(session, cache_ttl_seconds=10)
 
-    with pytest.raises(CannotConnectError):
+    with pytest.raises(CannotConnectError, match="Image request failed with status 500: server error"):
         await client.async_get_camera_image("Subida_Vix")
 
     assert client.get_camera_state("Subida_Vix").available is False

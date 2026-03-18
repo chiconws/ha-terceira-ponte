@@ -17,6 +17,8 @@ from .const import (
     AUTH_TOKEN_PATH,
     BASE_URL,
     DEFAULT_TEST_CAMERA_ID,
+    IMAGE_FETCH_RETRY_ATTEMPTS,
+    IMAGE_FETCH_RETRY_DELAY_SECONDS,
     IMAGE_PATH_TEMPLATE,
     REGISTER_ACCESS_PATH,
     REQUEST_TIMEOUT_SECONDS,
@@ -122,8 +124,20 @@ class TerceiraPonteClient:
                 image, content_type = await self._async_fetch_camera_image(camera_id)
             except TerceiraPonteError as err:
                 state = self._camera_states.setdefault(camera_id, CameraState())
-                state.available = False
                 state.last_error = str(err)
+
+                if cache is not None:
+                    state.available = True
+                    state.bytes_size = len(cache.data)
+                    state.content_type = cache.content_type
+                    _LOGGER.debug(
+                        "Using stale cached image for camera %s after fetch failure: %s",
+                        camera_id,
+                        err,
+                    )
+                    return cache.data
+
+                state.available = False
                 raise
 
             cached = CachedImage(
@@ -151,40 +165,67 @@ class TerceiraPonteClient:
         self._cache_ttl_seconds = cache_ttl_seconds
 
     async def _async_fetch_camera_image(self, camera_id: str) -> tuple[bytes, str]:
-        """Fetch a camera snapshot with auth retry."""
+        """Fetch a camera snapshot with auth and transient error retries."""
         image_path = IMAGE_PATH_TEMPLATE.format(camera_id=camera_id)
+        image_url = f"{self._base_url}{image_path}"
 
-        for attempt in range(2):
-            token = await self._async_get_token(force_refresh=attempt == 1)
-            headers = {"Authorization": f"Bearer {token}"}
+        for attempt in range(IMAGE_FETCH_RETRY_ATTEMPTS):
+            force_refresh = False
 
-            try:
-                async with async_timeout.timeout(REQUEST_TIMEOUT_SECONDS):
-                    async with self._session.get(
-                        f"{self._base_url}{image_path}",
-                        headers=headers,
-                    ) as response:
-                        if response.status == 401:
-                            if attempt == 0:
-                                self._token = None
-                                self._token_expires_at = None
-                                continue
-                            raise AuthenticationError("Authentication failed while fetching image")
+            while True:
+                token = await self._async_get_token(force_refresh=force_refresh)
+                headers = {"Authorization": f"Bearer {token}"}
 
-                        if response.status >= 400:
-                            body = await response.text()
-                            raise CannotConnectError(
-                                f"Image request failed with status {response.status}: {body}"
+                try:
+                    async with async_timeout.timeout(REQUEST_TIMEOUT_SECONDS):
+                        async with self._session.get(image_url, headers=headers) as response:
+                            if response.status == 401:
+                                if not force_refresh:
+                                    self._token = None
+                                    self._token_expires_at = None
+                                    force_refresh = True
+                                    continue
+                                raise AuthenticationError(
+                                    "Authentication failed while fetching image"
+                                )
+
+                            if response.status >= 500:
+                                body = await response.text()
+                                if attempt < IMAGE_FETCH_RETRY_ATTEMPTS - 1:
+                                    _LOGGER.debug(
+                                        "Image request for camera %s failed with status %s, retrying: %s",
+                                        camera_id,
+                                        response.status,
+                                        body,
+                                    )
+                                    await asyncio.sleep(IMAGE_FETCH_RETRY_DELAY_SECONDS)
+                                    break
+                                raise CannotConnectError(
+                                    f"Image request failed with status {response.status}: {body}"
+                                )
+
+                            if response.status >= 400:
+                                body = await response.text()
+                                raise CannotConnectError(
+                                    f"Image request failed with status {response.status}: {body}"
+                                )
+
+                            return await response.read(), response.headers.get(
+                                "Content-Type",
+                                "image/jpeg",
                             )
-
-                        return await response.read(), response.headers.get(
-                            "Content-Type",
-                            "image/jpeg",
+                except (ClientError, TimeoutError) as err:
+                    if attempt < IMAGE_FETCH_RETRY_ATTEMPTS - 1:
+                        _LOGGER.debug(
+                            "Image request for camera %s failed, retrying: %s",
+                            camera_id,
+                            err,
                         )
-            except (ClientError, TimeoutError) as err:
-                raise CannotConnectError("Could not fetch image") from err
+                        await asyncio.sleep(IMAGE_FETCH_RETRY_DELAY_SECONDS)
+                        break
+                    raise CannotConnectError("Could not fetch image") from err
 
-        raise AuthenticationError("Authentication retry exhausted")
+        raise CannotConnectError("Image retry exhausted")
 
     async def _async_get_token(self, *, force_refresh: bool = False) -> str:
         """Return a valid JWT token."""
