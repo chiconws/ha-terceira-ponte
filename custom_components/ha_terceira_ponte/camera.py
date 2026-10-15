@@ -48,33 +48,22 @@ class TerceiraPonteCamera(Camera):
         self._attr_unique_id = camera_id
         self._attr_name = name
         self._attr_content_type = "image/jpeg"
+        self._attr_extra_state_attributes = {"camera_id": camera_id}
 
     @property
     def available(self) -> bool:
         """Return whether the camera is available."""
-        return self._client.get_camera_state(self._camera_id).available
-
-    @property
-    def extra_state_attributes(self) -> dict[str, str | int | None]:
-        """Return extra state attributes."""
-        state = self._client.get_camera_state(self._camera_id)
-        return {
-            "camera_id": self._camera_id,
-            "last_success_at": (
-                state.last_success_at.isoformat() if state.last_success_at else None
-            ),
-            "bytes": state.bytes_size,
-            "content_type": state.content_type,
-        }
+        return self._client.is_available(self._camera_id)
 
     async def async_camera_image(
         self,
         width: int | None = None,
         height: int | None = None,
     ) -> bytes | None:
-        """Return a camera image."""
+        """Return a camera image, writing state only when availability flips."""
+        was_available = self.available
         try:
             return await self._client.async_get_camera_image(self._camera_id)
         finally:
-            if self.hass is not None:
+            if self.hass is not None and self.available != was_available:
                 self.async_write_ha_state()

@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from datetime import UTC, datetime
 import logging
 import time
 
@@ -28,16 +27,6 @@ class TerceiraPonteError(Exception):
 
 
 @dataclass(slots=True)
-class CameraState:
-    """Current state for a camera feed."""
-
-    available: bool = True
-    last_success_at: datetime | None = None
-    bytes_size: int | None = None
-    content_type: str | None = None
-
-
-@dataclass(slots=True)
 class CachedImage:
     """Cached snapshot payload."""
 
@@ -56,7 +45,7 @@ class TerceiraPonteClient:
         self._token_lock = asyncio.Lock()
         self._camera_locks: dict[str, asyncio.Lock] = {}
         self._image_cache: dict[str, CachedImage] = {}
-        self._camera_states: dict[str, CameraState] = {}
+        self._unavailable: set[str] = set()
 
     async def async_validate_connection(self) -> None:
         """Validate auth and image retrieval."""
@@ -94,12 +83,11 @@ class TerceiraPonteClient:
             if cache is not None and self._is_cache_valid(cache):
                 return cache.data
 
-            state = self.get_camera_state(camera_id)
             try:
-                image, content_type = await self._async_fetch_camera_image(camera_id)
+                image = await self._async_fetch_camera_image(camera_id)
             except TerceiraPonteError as err:
-                state.available = cache is not None
                 if cache is None:
+                    self._unavailable.add(camera_id)
                     raise
                 _LOGGER.debug(
                     "Using stale cached image for camera %s after fetch failure: %s",
@@ -109,17 +97,14 @@ class TerceiraPonteClient:
                 return cache.data
 
             self._image_cache[camera_id] = CachedImage(image, self._monotonic())
-            state.available = True
-            state.last_success_at = datetime.now(tz=UTC)
-            state.bytes_size = len(image)
-            state.content_type = content_type
+            self._unavailable.discard(camera_id)
             return image
 
-    def get_camera_state(self, camera_id: str) -> CameraState:
-        """Return camera state metadata."""
-        return self._camera_states.setdefault(camera_id, CameraState())
+    def is_available(self, camera_id: str) -> bool:
+        """Return False once a fetch failed with no cached image to fall back on."""
+        return camera_id not in self._unavailable
 
-    async def _async_fetch_camera_image(self, camera_id: str) -> tuple[bytes, str]:
+    async def _async_fetch_camera_image(self, camera_id: str) -> bytes:
         """Fetch a camera snapshot, refreshing the token once on 401 and retrying transient errors."""
         image_url = f"{BASE_URL}{IMAGE_PATH_TEMPLATE.format(camera_id=camera_id)}"
         refreshed = False
@@ -137,9 +122,7 @@ class TerceiraPonteClient:
                             refreshed = True
                             continue
                         if response.status < 400:
-                            return await response.read(), response.headers.get(
-                                "Content-Type", "image/jpeg"
-                            )
+                            return await response.read()
                         error = TerceiraPonteError(
                             f"Image request failed with status {response.status}: "
                             f"{await response.text()}"

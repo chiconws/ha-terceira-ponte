@@ -1,12 +1,9 @@
 """Tests for ha_terceira_ponte camera entities."""
 from __future__ import annotations
 
-from datetime import UTC, datetime
-
 import pytest
 
 from custom_components.ha_terceira_ponte import camera as camera_platform
-from custom_components.ha_terceira_ponte.client import CameraState
 from custom_components.ha_terceira_ponte.const import CAMERAS, DOMAIN
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -14,25 +11,11 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 class FakeClient:
     """Fake client for camera tests."""
 
-    def __init__(self) -> None:
-        self.images: dict[str, bytes] = {
-            camera_id: camera_id.encode("utf-8") for camera_id in CAMERAS
-        }
-        self.states: dict[str, CameraState] = {
-            camera_id: CameraState(
-                available=True,
-                last_success_at=datetime(2026, 3, 12, tzinfo=UTC),
-                bytes_size=len(camera_id),
-                content_type="image/jpeg",
-            )
-            for camera_id in CAMERAS
-        }
-
     async def async_get_camera_image(self, camera_id: str) -> bytes:
-        return self.images[camera_id]
+        return camera_id.encode("utf-8")
 
-    def get_camera_state(self, camera_id: str) -> CameraState:
-        return self.states[camera_id]
+    def is_available(self, camera_id: str) -> bool:
+        return True
 
 
 @pytest.mark.asyncio

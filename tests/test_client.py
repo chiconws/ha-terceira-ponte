@@ -190,13 +190,10 @@ async def test_client_returns_stale_cache_when_refresh_fails() -> None:
     first = await client.async_get_camera_image("Subida_Vix")
     now[0] = 111.0
     second = await client.async_get_camera_image("Subida_Vix")
-    state = client.get_camera_state("Subida_Vix")
 
     assert first == b"image-one"
     assert second == b"image-one"
-    assert state.available is True
-    assert state.bytes_size == len(b"image-one")
-    assert state.content_type == "image/jpeg"
+    assert client.is_available("Subida_Vix") is True
 
 
 @pytest.mark.asyncio
@@ -216,4 +213,4 @@ async def test_client_marks_camera_unavailable_after_failed_fetch() -> None:
     with pytest.raises(TerceiraPonteError, match="Image request failed with status 500: server error"):
         await client.async_get_camera_image("Subida_Vix")
 
-    assert client.get_camera_state("Subida_Vix").available is False
+    assert client.is_available("Subida_Vix") is False
