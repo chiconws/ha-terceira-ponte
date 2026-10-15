@@ -45,6 +45,39 @@ Requer Home Assistant 2025.8 ou mais recente.
 3. Confirme a configuração.
 4. Se quiser ajustar o cache, abra `Configurar` nas opções da integração.
 
+## Exemplo: resumo do trânsito com IA
+
+O feed não traz dados de trânsito, mas o Home Assistant pode analisar a imagem com qualquer integração de IA que ofereça uma entidade AI Task (OpenAI, Google Gemini, Ollama etc.). Esta automação manda, em dias úteis às 7h, uma notificação com a foto e um resumo do trânsito:
+
+```yaml
+alias: Trânsito na Terceira Ponte
+triggers:
+  - trigger: time
+    at: "07:00:00"
+conditions:
+  - condition: time
+    weekday: [mon, tue, wed, thu, fri]
+actions:
+  - action: ai_task.generate_data
+    data:
+      task_name: Trânsito Terceira Ponte
+      instructions: >-
+        Esta é uma câmera da Terceira Ponte, em Vitória/ES. Diga em uma frase
+        curta se o trânsito está livre, moderado ou congestionado.
+      attachments:
+        - media_content_id: media-source://camera/camera.ceturb_terceira_ponte_subida_sentido_vila_velha
+          media_content_type: image/jpeg
+    response_variable: transito
+  - action: notify.mobile_app_seu_celular
+    data:
+      title: Terceira Ponte
+      message: "{{ transito.data }}"
+      data:
+        image: /api/camera_proxy/camera.ceturb_terceira_ponte_subida_sentido_vila_velha
+```
+
+Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalação.
+
 ## Limitações conhecidas
 
 - O feed é snapshot JPEG, não stream de vídeo.
