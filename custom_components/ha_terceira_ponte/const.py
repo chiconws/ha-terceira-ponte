@@ -18,10 +18,10 @@ REQUEST_TIMEOUT_SECONDS = 10
 IMAGE_FETCH_RETRY_ATTEMPTS = 3
 IMAGE_FETCH_RETRY_DELAY_SECONDS = 0.75
 
-# camera_id -> entity name
+# camera_id -> entity name, matching the card titles on the CETURB site (direction of traffic).
 CAMERAS: dict[str, str] = {
-    "Subida_Vix": "Subida Vitória",
-    "Descida_Vix": "Descida Vitória",
-    "Subida_VilaVelha": "Subida Vila Velha",
-    "Descida_VilaVelha": "Descida Vila Velha",
+    "Subida_Vix": "Subida Sentido Vila Velha",
+    "Descida_VilaVelha": "Descida Sentido Vila Velha",
+    "Subida_VilaVelha": "Subida Sentido Vitória",
+    "Descida_Vix": "Descida Sentido Vitória",
 }

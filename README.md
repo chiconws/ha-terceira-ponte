@@ -12,11 +12,11 @@ As imagens são obtidas do serviço da CETURB-ES com autenticação JWT pública
 
 ## Recursos
 
-- 4 entidades `camera` fixas:
-  - `Subida Vitória`
-  - `Descida Vitória`
-  - `Subida Vila Velha`
-  - `Descida Vila Velha`
+- 4 entidades `camera` fixas, com os mesmos nomes do site da CETURB (sentido do tráfego):
+  - `Subida Sentido Vila Velha`
+  - `Descida Sentido Vila Velha`
+  - `Subida Sentido Vitória`
+  - `Descida Sentido Vitória`
 - Configuração por UI em `Configurações > Dispositivos e Serviços`
 - Cache configurável nas opções da integração
 - Renovação automática do token JWT
