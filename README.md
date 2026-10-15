@@ -24,6 +24,8 @@ As imagens são obtidas do serviço da CETURB-ES com autenticação JWT pública
 
 ## Instalação
 
+Requer Home Assistant 2025.8 ou mais recente.
+
 ### HACS
 
 1. Adicione este repositório como repositório customizado no HACS.

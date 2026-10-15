@@ -1,8 +1,6 @@
 """Constants for the ha_terceira_ponte integration."""
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 DOMAIN = "ha_terceira_ponte"
 NAME = "Terceira Ponte"
 
@@ -17,31 +15,13 @@ MIN_CACHE_TTL_SECONDS = 5
 MAX_CACHE_TTL_SECONDS = 60
 
 REQUEST_TIMEOUT_SECONDS = 10
-TOKEN_REFRESH_SKEW_SECONDS = 300
 IMAGE_FETCH_RETRY_ATTEMPTS = 3
 IMAGE_FETCH_RETRY_DELAY_SECONDS = 0.75
 
-DEVICE_ID = "ha_terceira_ponte_cameras"
-DEVICE_NAME = "CETURB Terceira Ponte"
-MANUFACTURER = "CETURB-ES"
-MODEL = "Terceira Ponte Cameras"
-
-PLATFORMS: tuple[str, ...] = ("camera",)
-
-
-@dataclass(frozen=True, slots=True)
-class CameraDefinition:
-    """Static definition for a CETURB camera."""
-
-    camera_id: str
-    name: str
-
-
-CAMERAS: tuple[CameraDefinition, ...] = (
-    CameraDefinition(camera_id="Subida_Vix", name="Subida Vitória"),
-    CameraDefinition(camera_id="Descida_Vix", name="Descida Vitória"),
-    CameraDefinition(camera_id="Subida_VilaVelha", name="Subida Vila Velha"),
-    CameraDefinition(camera_id="Descida_VilaVelha", name="Descida Vila Velha"),
-)
-
-DEFAULT_TEST_CAMERA_ID = CAMERAS[0].camera_id
+# camera_id -> entity name
+CAMERAS: dict[str, str] = {
+    "Subida_Vix": "Subida Vitória",
+    "Descida_Vix": "Descida Vitória",
+    "Subida_VilaVelha": "Subida Vila Velha",
+    "Descida_VilaVelha": "Descida Vila Velha",
+}

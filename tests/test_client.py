@@ -7,7 +7,7 @@ import json
 import pytest
 
 from custom_components.ha_terceira_ponte.client import (
-    CannotConnectError,
+    TerceiraPonteError,
     TerceiraPonteClient,
 )
 
@@ -38,7 +38,7 @@ class FakeResponse:
 
     def raise_for_status(self) -> None:
         if self.status >= 400:
-            raise CannotConnectError(f"HTTP {self.status}")
+            raise TerceiraPonteError(f"HTTP {self.status}")
 
     async def json(self) -> dict:
         if self._json_data is not None:
@@ -197,7 +197,6 @@ async def test_client_returns_stale_cache_when_refresh_fails() -> None:
     assert state.available is True
     assert state.bytes_size == len(b"image-one")
     assert state.content_type == "image/jpeg"
-    assert state.last_error == "Image request failed with status 500: server error"
 
 
 @pytest.mark.asyncio
@@ -214,7 +213,7 @@ async def test_client_marks_camera_unavailable_after_failed_fetch() -> None:
 
     client = TerceiraPonteClient(session, cache_ttl_seconds=10)
 
-    with pytest.raises(CannotConnectError, match="Image request failed with status 500: server error"):
+    with pytest.raises(TerceiraPonteError, match="Image request failed with status 500: server error"):
         await client.async_get_camera_image("Subida_Vix")
 
     assert client.get_camera_state("Subida_Vix").available is False

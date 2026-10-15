@@ -16,17 +16,16 @@ class FakeClient:
 
     def __init__(self) -> None:
         self.images: dict[str, bytes] = {
-            definition.camera_id: definition.camera_id.encode("utf-8")
-            for definition in CAMERAS
+            camera_id: camera_id.encode("utf-8") for camera_id in CAMERAS
         }
         self.states: dict[str, CameraState] = {
-            definition.camera_id: CameraState(
+            camera_id: CameraState(
                 available=True,
                 last_success_at=datetime(2026, 3, 12, tzinfo=UTC),
-                bytes_size=len(definition.camera_id),
+                bytes_size=len(camera_id),
                 content_type="image/jpeg",
             )
-            for definition in CAMERAS
+            for camera_id in CAMERAS
         }
 
     async def async_get_camera_image(self, camera_id: str) -> bytes:
@@ -40,8 +39,7 @@ class FakeClient:
 async def test_camera_setup_creates_four_entities(hass) -> None:
     """Camera setup should create the expected camera entities."""
     entry = MockConfigEntry(domain=DOMAIN, data={}, title="Terceira Ponte")
-    fake_client = FakeClient()
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = fake_client
+    entry.runtime_data = FakeClient()
 
     added_entities = []
 
@@ -51,9 +49,7 @@ async def test_camera_setup_creates_four_entities(hass) -> None:
     await camera_platform.async_setup_entry(hass, entry, add_entities)
 
     assert len(added_entities) == 4
-    assert [entity.unique_id for entity in added_entities] == [
-        definition.camera_id for definition in CAMERAS
-    ]
+    assert [entity.unique_id for entity in added_entities] == list(CAMERAS)
 
     first_image = await added_entities[0].async_camera_image()
-    assert first_image == CAMERAS[0].camera_id.encode("utf-8")
+    assert first_image == next(iter(CAMERAS)).encode("utf-8")
