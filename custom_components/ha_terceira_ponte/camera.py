@@ -9,7 +9,7 @@ from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .client import TerceiraPonteClient
-from .const import CAMERAS, DOMAIN
+from .const import BASE_URL, CAMERAS, DOMAIN
 
 if TYPE_CHECKING:
     from . import TerceiraPonteConfigEntry
@@ -38,6 +38,7 @@ class TerceiraPonteCamera(Camera):
         manufacturer="CETURB-ES",
         model="Terceira Ponte Cameras",
         entry_type=DeviceEntryType.SERVICE,
+        configuration_url=BASE_URL,
     )
 
     def __init__(self, client: TerceiraPonteClient, camera_id: str, name: str) -> None:
