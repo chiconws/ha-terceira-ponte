@@ -1,7 +1,10 @@
 """Tests for ha_terceira_ponte camera entities."""
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 import pytest
+from homeassistant.helpers.entity import Entity
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ha_terceira_ponte import camera as camera_platform
@@ -24,10 +27,10 @@ async def test_camera_setup_creates_four_entities(hass) -> None:
     entry = MockConfigEntry(domain=DOMAIN, data={}, title="Terceira Ponte")
     entry.runtime_data = FakeClient()
 
-    added_entities = []
+    added_entities: list = []
 
-    def add_entities(entities):
-        added_entities.extend(list(entities))
+    def add_entities(new_entities: Iterable[Entity], update_before_add: bool = False) -> None:
+        added_entities.extend(new_entities)
 
     await camera_platform.async_setup_entry(hass, entry, add_entities)
 
