@@ -34,15 +34,3 @@ pyrightconfig.json
 # OS specific files
 .DS_Store
 Thumbs.db
-
-# Local Home Assistant development files
-.devcontainer.json
-docker-compose.yml
-config.example/
-config/
-deps/
-.storage/
-home-assistant_v2.db*
-home-assistant.log*
-.HA_VERSION
-.ha_run.lock

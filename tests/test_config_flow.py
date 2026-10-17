@@ -4,13 +4,13 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ha_terceira_ponte.const import (
     CONF_CACHE_TTL_SECONDS,
     DEFAULT_CACHE_TTL_SECONDS,
     DOMAIN,
 )
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 @pytest.mark.asyncio
