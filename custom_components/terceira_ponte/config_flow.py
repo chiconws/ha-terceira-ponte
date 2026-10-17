@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 
-import probatio as vol
+import probatio
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlowWithReload
 from homeassistant.core import callback
 from homeassistant.helpers import selector
@@ -45,7 +45,7 @@ class TerceiraPonteConfigFlow(ConfigFlow, domain=DOMAIN):
             else:
                 return self.async_create_entry(title=NAME, data={})
 
-        return self.async_show_form(step_id="user", data_schema=vol.Schema({}), errors=errors)
+        return self.async_show_form(step_id="user", data_schema=probatio.Schema({}), errors=errors)
 
     @staticmethod
     @callback
@@ -64,9 +64,9 @@ class TerceiraPonteOptionsFlow(OptionsFlowWithReload):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Required(
+                    probatio.Required(
                         CONF_CACHE_TTL_SECONDS,
                         default=self.config_entry.options.get(
                             CONF_CACHE_TTL_SECONDS,
