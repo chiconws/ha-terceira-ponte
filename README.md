@@ -1,60 +1,80 @@
-# ha-terceira-ponte
+# Terceira Ponte
 
 [![HACS][badge-hacs]][link-hacs]
 [![GitHub Release][badge-release]][link-release]
+[![Home Assistant][badge-ha]][link-ha]
 [![GitHub Commit Activity][badge-commit-activity]][link-commits]
 [![HACS Validation][badge-hacs-validation]][link-hacs-validation]
 [![Hassfest][badge-hassfest]][link-hassfest]
+[![Tests][badge-tests]][link-tests]
+[![License][badge-license]][link-license]
 
-Integração Terceira Ponte para Home Assistant.
+As quatro câmeras públicas da **Terceira Ponte** (Vitória–Vila Velha, ES) como entidades `camera` no Home Assistant, direto do serviço da CETURB-ES.
 
-Integração customizada para Home Assistant que expõe as quatro câmeras
-públicas da Terceira Ponte, em Vitória/ES, como entidades `camera`.
-
-As imagens são obtidas do serviço da CETURB-ES com autenticação JWT pública
-e cache curto para reduzir requisições duplicadas quando o dashboard é aberto.
-
-![Prévia do dashboard](docs/images/dashboard-preview.png)
+![Terceira Ponte](docs/images/dashboard-preview.png)
 
 ## Recursos
 
-- 4 entidades `camera` fixas, com os mesmos nomes do site da CETURB
-  (sentido do tráfego):
-  - `Subida Sentido Vila Velha`
-  - `Descida Sentido Vila Velha`
-  - `Subida Sentido Vitória`
-  - `Descida Sentido Vitória`
-- Configuração por UI em `Configurações > Dispositivos e Serviços`
-- Cache configurável nas opções da integração
-- Renovação automática do token JWT
-- Compatível com HACS
+- 4 câmeras com os mesmos nomes do site da CETURB, por sentido do tráfego
+- Cache curto e configurável: abrir o dashboard em vários aparelhos não multiplica as requisições
+- Token JWT público renovado automaticamente; falhas passageiras são repetidas
+
+## Requisitos
+
+- Home Assistant 2026.10 ou mais recente
+- Acesso à internet (o serviço `terceiraponte.ceturb.es.gov.br` é público e não pede conta)
 
 ## Instalação
 
-Requer Home Assistant 2025.8 ou mais recente.
+### HACS (recomendado)
 
-### HACS
+[![Abrir este repositório no HACS da sua instância do Home Assistant.][badge-my-hacs]][link-my-hacs]
 
-[![Abrir este repositório no HACS][badge-my-hacs]][link-my-hacs]
-
-Ou, manualmente:
-
-1. Adicione este repositório como repositório customizado no HACS.
-2. Selecione a categoria `Integration`.
-3. Instale a integração `Terceira Ponte`.
-4. Reinicie o Home Assistant.
+1. Clique no botão acima, ou abra **HACS → ⋮ → Repositórios personalizados** e adicione
+   `https://github.com/chiconws/ha-terceira-ponte` com o tipo **Integração**.
+2. Procure por **Terceira Ponte** no HACS e clique em **Baixar**.
+3. Reinicie o Home Assistant.
 
 ### Manual
 
-1. Copie a pasta `custom_components/terceira_ponte` para `custom_components`.
-2. Reinicie o Home Assistant.
+1. Baixe a [versão mais recente][link-release].
+2. Copie `custom_components/terceira_ponte` para a pasta `custom_components` da sua
+   configuração do Home Assistant.
+3. Reinicie o Home Assistant.
 
 ## Configuração
 
-1. Vá em `Configurações > Dispositivos e Serviços`.
-2. Adicione a integração `Terceira Ponte`.
-3. Confirme a configuração.
-4. Se quiser ajustar o cache, abra `Configurar` nas opções da integração.
+[![Configurar Terceira Ponte na sua instância do Home Assistant.][badge-my-config]][link-my-config]
+
+1. Vá em **Configurações → Dispositivos e serviços → Adicionar integração**.
+2. Procure por **Terceira Ponte** e siga os passos.
+
+| Campo | Descrição |
+| --- | --- |
+| (nenhum) | Basta confirmar; não há login |
+
+Em **Configurar**, **Atualizar imagem a cada** (5 a 60 s, padrão 10 s) define por quanto tempo a mesma imagem é reaproveitada.
+
+## Entidades
+
+| Entidade | Plataforma | Descrição |
+| --- | --- | --- |
+| Subida Sentido Vila Velha | `camera` | Snapshot JPEG |
+| Descida Sentido Vila Velha | `camera` | Snapshot JPEG |
+| Subida Sentido Vitória | `camera` | Snapshot JPEG |
+| Descida Sentido Vitória | `camera` | Snapshot JPEG |
+
+## Solução de problemas
+
+- **Diagnóstico:** Configurações → Dispositivos e serviços → Terceira Ponte → ⋮ →
+  **Baixar diagnóstico** (credenciais são ocultadas). Anexe o arquivo ao abrir um bug.
+- **Logs de depuração:**
+
+```yaml
+logger:
+  logs:
+    custom_components.terceira_ponte: debug
+```
 
 ## Exemplo: resumo do trânsito com IA
 
@@ -94,27 +114,45 @@ Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalaçã
 
 ## Limitações conhecidas
 
-- O feed é snapshot JPEG, não stream de vídeo.
-- A disponibilidade depende do serviço público da CETURB-ES.
-- O backend observado em 12 de março de 2026 exige JWT público e muda as
-  imagens em intervalos curtos, mas sem contrato público documentado de
-  atualização.
+- O feed é snapshot JPEG, não vídeo.
+- Depende do serviço público da CETURB-ES, sem contrato documentado de atualização.
 
-## Fonte das imagens
+## Desenvolvimento
 
-As imagens públicas são disponibilizadas pela CETURB-ES em:
+Veja o [AGENTS.md](AGENTS.md) para a estrutura do código. Verificações rápidas:
 
-<https://terceiraponte.ceturb.es.gov.br/>
+```bash
+uv venv --python 3.14 .venv && uv pip install -r requirements_test.txt
+python -m ruff check custom_components/terceira_ponte tests
+python -m pytest
+```
+
+## Créditos
+
+Imagens públicas da CETURB-ES: <https://terceiraponte.ceturb.es.gov.br/>.
+
+## Licença
+
+MIT, veja [LICENSE](LICENSE).
 
 [badge-hacs]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg
-[badge-release]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2Fchiconws%2Fha-terceira-ponte%2Freleases%2Flatest&query=%24.tag_name&label=release
+[badge-release]: https://img.shields.io/github/v/release/chiconws/ha-terceira-ponte
+[badge-ha]: https://img.shields.io/badge/Home%20Assistant-2026.10%2B-41BDF5?logo=home-assistant
 [badge-commit-activity]: https://img.shields.io/github/commit-activity/m/chiconws/ha-terceira-ponte
 [badge-hacs-validation]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hacs.yaml/badge.svg
 [badge-hassfest]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hassfest.yaml/badge.svg
-[link-hacs]: https://github.com/custom-components/hacs
+[badge-tests]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/tests.yaml/badge.svg
+[badge-license]: https://img.shields.io/github/license/chiconws/ha-terceira-ponte
+[badge-my-hacs]: https://my.home-assistant.io/badges/hacs_repository.svg
+[badge-my-config]: https://my.home-assistant.io/badges/config_flow_start.svg
+
+[link-hacs]: https://hacs.xyz/
 [link-release]: https://github.com/chiconws/ha-terceira-ponte/releases/latest
+[link-ha]: https://www.home-assistant.io/
 [link-commits]: https://github.com/chiconws/ha-terceira-ponte/commits/main
 [link-hacs-validation]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hacs.yaml
 [link-hassfest]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hassfest.yaml
-[badge-my-hacs]: https://my.home-assistant.io/badges/hacs_repository.svg
+[link-tests]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/tests.yaml
+[link-license]: LICENSE
 [link-my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=chiconws&repository=ha-terceira-ponte&category=integration
+[link-my-config]: https://my.home-assistant.io/redirect/config_flow_start/?domain=terceira_ponte
