@@ -35,6 +35,10 @@ Requer Home Assistant 2025.8 ou mais recente.
 
 ### HACS
 
+[![Abrir este repositório no HACS][badge-my-hacs]][link-my-hacs]
+
+Ou, manualmente:
+
 1. Adicione este repositório como repositório customizado no HACS.
 2. Selecione a categoria `Integration`.
 3. Instale a integração `Terceira Ponte`.
@@ -112,3 +116,5 @@ As imagens públicas são disponibilizadas pela CETURB-ES em:
 [link-commits]: https://github.com/chiconws/ha-terceira-ponte/commits/main
 [link-hacs-validation]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hacs.yaml
 [link-hassfest]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hassfest.yaml
+[badge-my-hacs]: https://my.home-assistant.io/badges/hacs_repository.svg
+[link-my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=chiconws&repository=ha-terceira-ponte&category=integration
