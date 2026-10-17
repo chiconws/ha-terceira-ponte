@@ -1,4 +1,4 @@
-"""Config flow for the ha_terceira_ponte integration."""
+"""Config flow for the terceira_ponte integration."""
 from __future__ import annotations
 
 import logging

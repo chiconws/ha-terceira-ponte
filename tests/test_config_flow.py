@@ -1,4 +1,4 @@
-"""Tests for the ha_terceira_ponte config flow."""
+"""Tests for the terceira_ponte config flow."""
 from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.ha_terceira_ponte.const import (
+from custom_components.terceira_ponte.const import (
     CONF_CACHE_TTL_SECONDS,
     DEFAULT_CACHE_TTL_SECONDS,
     DOMAIN,
@@ -17,7 +17,7 @@ from custom_components.ha_terceira_ponte.const import (
 async def test_user_flow_creates_entry(hass) -> None:
     """The user flow should create a config entry after validation."""
     with patch(
-        "custom_components.ha_terceira_ponte.config_flow.TerceiraPonteClient.async_validate_connection",
+        "custom_components.terceira_ponte.config_flow.TerceiraPonteClient.async_validate_connection",
         new=AsyncMock(),
     ):
         result = await hass.config_entries.flow.async_init(

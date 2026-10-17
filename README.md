@@ -46,7 +46,7 @@ Ou, manualmente:
 
 ### Manual
 
-1. Copie a pasta `custom_components/ha_terceira_ponte` para `custom_components`.
+1. Copie a pasta `custom_components/terceira_ponte` para `custom_components`.
 2. Reinicie o Home Assistant.
 
 ## Configuração
