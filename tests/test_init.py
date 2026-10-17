@@ -4,12 +4,12 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, patch
 
 import pytest
-
-from custom_components.ha_terceira_ponte import async_setup_entry
-from custom_components.ha_terceira_ponte.client import CannotConnectError
-from custom_components.ha_terceira_ponte.const import DOMAIN
 from homeassistant.exceptions import ConfigEntryNotReady
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+
+from custom_components.ha_terceira_ponte import async_setup_entry
+from custom_components.ha_terceira_ponte.client import TerceiraPonteError
+from custom_components.ha_terceira_ponte.const import DOMAIN
 
 
 @pytest.mark.asyncio
@@ -21,13 +21,13 @@ async def test_setup_entry_raises_when_validation_fails(hass) -> None:
     with (
         patch(
             "custom_components.ha_terceira_ponte.TerceiraPonteClient.async_validate_connection",
-            new=AsyncMock(side_effect=CannotConnectError("boom")),
+            new=AsyncMock(side_effect=TerceiraPonteError("boom")),
         ),
         patch.object(
             hass.config_entries,
             "async_forward_entry_setups",
             new=AsyncMock(),
         ),
+        pytest.raises(ConfigEntryNotReady),
     ):
-        with pytest.raises(ConfigEntryNotReady):
-            await async_setup_entry(hass, entry)
+        await async_setup_entry(hass, entry)

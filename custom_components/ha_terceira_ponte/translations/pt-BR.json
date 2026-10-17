@@ -9,9 +9,6 @@
     "error": {
       "cannot_connect": "Falha ao acessar o serviço da Terceira Ponte.",
       "unknown": "Erro inesperado."
-    },
-    "abort": {
-      "single_instance_allowed": "Apenas uma configuração da Terceira Ponte é permitida."
     }
   },
   "options": {
