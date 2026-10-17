@@ -1,4 +1,4 @@
-"""The ha_terceira_ponte integration."""
+"""The terceira_ponte integration."""
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry

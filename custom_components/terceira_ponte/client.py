@@ -1,4 +1,4 @@
-"""HTTP client for the ha_terceira_ponte integration."""
+"""HTTP client for the terceira_ponte integration."""
 from __future__ import annotations
 
 import asyncio
@@ -87,6 +87,8 @@ class TerceiraPonteClient:
                 image = await self._async_fetch_camera_image(camera_id)
             except TerceiraPonteError as err:
                 if cache is None:
+                    if camera_id not in self._unavailable:
+                        _LOGGER.info("Camera %s is unavailable: %s", camera_id, err)
                     self._unavailable.add(camera_id)
                     raise
                 _LOGGER.debug(
@@ -97,7 +99,9 @@ class TerceiraPonteClient:
                 return cache.data
 
             self._image_cache[camera_id] = CachedImage(image, self._monotonic())
-            self._unavailable.discard(camera_id)
+            if camera_id in self._unavailable:
+                _LOGGER.info("Camera %s is available again", camera_id)
+                self._unavailable.discard(camera_id)
             return image
 
     def is_available(self, camera_id: str) -> bool:

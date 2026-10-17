@@ -1,4 +1,4 @@
-"""Tests for ha_terceira_ponte camera entities."""
+"""Tests for terceira_ponte camera entities."""
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -7,8 +7,8 @@ import pytest
 from homeassistant.helpers.entity import Entity
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from custom_components.ha_terceira_ponte import camera as camera_platform
-from custom_components.ha_terceira_ponte.const import CAMERAS, DOMAIN
+from custom_components.terceira_ponte import camera as camera_platform
+from custom_components.terceira_ponte.const import CAMERAS, DOMAIN
 
 
 class FakeClient:

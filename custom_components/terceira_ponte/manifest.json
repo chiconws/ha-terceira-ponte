@@ -1,7 +1,9 @@
 {
-  "domain": "ha_terceira_ponte",
+  "domain": "terceira_ponte",
   "name": "Terceira Ponte",
-  "codeowners": ["@chiconws"],
+  "codeowners": [
+    "@chiconws"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/chiconws/ha-terceira-ponte",
   "integration_type": "service",
@@ -9,6 +11,5 @@
   "issue_tracker": "https://github.com/chiconws/ha-terceira-ponte/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "2.0.0"
+  "version": "3.0.0"
 }
-

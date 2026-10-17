@@ -1,4 +1,4 @@
-"""Tests for the ha_terceira_ponte client."""
+"""Tests for the terceira_ponte client."""
 from __future__ import annotations
 
 import json
@@ -8,11 +8,11 @@ from typing import cast
 import pytest
 from aiohttp import ClientSession
 
-from custom_components.ha_terceira_ponte.client import (
+from custom_components.terceira_ponte.client import (
     TerceiraPonteClient,
     TerceiraPonteError,
 )
-from custom_components.ha_terceira_ponte.const import (
+from custom_components.terceira_ponte.const import (
     AUTH_TOKEN_PATH,
     BASE_URL,
     IMAGE_PATH_TEMPLATE,
