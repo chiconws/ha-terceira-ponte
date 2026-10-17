@@ -1,14 +1,14 @@
 """Tests for the ha_terceira_ponte client."""
 from __future__ import annotations
 
-from collections import defaultdict
 import json
+from collections import defaultdict
 
 import pytest
 
 from custom_components.ha_terceira_ponte.client import (
-    TerceiraPonteError,
     TerceiraPonteClient,
+    TerceiraPonteError,
 )
 
 

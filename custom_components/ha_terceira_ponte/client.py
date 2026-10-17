@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
 import logging
 import time
+from dataclasses import dataclass
 
 from aiohttp import ClientError, ClientSession
 

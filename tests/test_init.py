@@ -4,12 +4,12 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, patch
 
 import pytest
+from homeassistant.exceptions import ConfigEntryNotReady
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ha_terceira_ponte import async_setup_entry
 from custom_components.ha_terceira_ponte.client import TerceiraPonteError
 from custom_components.ha_terceira_ponte.const import DOMAIN
-from homeassistant.exceptions import ConfigEntryNotReady
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 @pytest.mark.asyncio
@@ -28,6 +28,6 @@ async def test_setup_entry_raises_when_validation_fails(hass) -> None:
             "async_forward_entry_setups",
             new=AsyncMock(),
         ),
+        pytest.raises(ConfigEntryNotReady),
     ):
-        with pytest.raises(ConfigEntryNotReady):
-            await async_setup_entry(hass, entry)
+        await async_setup_entry(hass, entry)

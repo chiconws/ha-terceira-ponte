@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.ha_terceira_ponte import camera as camera_platform
 from custom_components.ha_terceira_ponte.const import CAMERAS, DOMAIN
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 
 class FakeClient:
