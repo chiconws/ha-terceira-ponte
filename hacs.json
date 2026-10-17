@@ -1,5 +1,6 @@
 {
-    "name": "ha-terceira-ponte",
-    "country": "BR",
-    "homeassistant": "2025.8.0"
+  "name": "Terceira Ponte",
+  "render_readme": true,
+  "homeassistant": "2025.8.0",
+  "country": "BR"
 }

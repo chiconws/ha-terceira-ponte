@@ -1,4 +1,4 @@
-"""HTTP client for the ha_terceira_ponte integration."""
+"""HTTP client for the terceira_ponte integration."""
 from __future__ import annotations
 
 import asyncio

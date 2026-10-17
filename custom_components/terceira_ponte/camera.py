@@ -1,4 +1,4 @@
-"""Camera platform for the ha_terceira_ponte integration."""
+"""Camera platform for the terceira_ponte integration."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -33,7 +33,7 @@ class TerceiraPonteCamera(Camera):
     _attr_has_entity_name = True
     _attr_should_poll = False
     _attr_device_info = DeviceInfo(
-        identifiers={(DOMAIN, "ha_terceira_ponte_cameras")},
+        identifiers={(DOMAIN, "terceira_ponte_cameras")},
         name="CETURB Terceira Ponte",
         manufacturer="CETURB-ES",
         model="Terceira Ponte Cameras",

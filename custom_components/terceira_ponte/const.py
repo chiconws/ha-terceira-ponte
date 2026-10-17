@@ -1,7 +1,7 @@
-"""Constants for the ha_terceira_ponte integration."""
+"""Constants for the terceira_ponte integration."""
 from __future__ import annotations
 
-DOMAIN = "ha_terceira_ponte"
+DOMAIN = "terceira_ponte"
 NAME = "Terceira Ponte"
 
 BASE_URL = "https://terceiraponte.ceturb.es.gov.br"

@@ -31,7 +31,7 @@ jobs:
         run: python -m pip install -r requirements_test.txt
 
       - name: Run Ruff
-        run: python -m ruff check custom_components/ha_terceira_ponte tests
+        run: python -m ruff check custom_components/terceira_ponte tests
 
       - name: Run tests with branch coverage
         run: |
