@@ -1,5 +1,4 @@
 """The terceira_ponte integration."""
-from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -15,7 +14,9 @@ PLATFORMS: list[Platform] = [Platform.CAMERA]
 type TerceiraPonteConfigEntry = ConfigEntry[TerceiraPonteClient]
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: TerceiraPonteConfigEntry) -> bool:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: TerceiraPonteConfigEntry
+) -> bool:
     """Set up Terceira Ponte from a config entry."""
     client = TerceiraPonteClient(
         async_get_clientsession(hass),
@@ -28,7 +29,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: TerceiraPonteConfigEntry
     try:
         await client.async_validate_connection()
     except TerceiraPonteError as err:
-        raise ConfigEntryNotReady("Could not connect to Terceira Ponte service") from err
+        raise ConfigEntryNotReady(
+            "Could not connect to Terceira Ponte service"
+        ) from err
 
     entry.runtime_data = client
     await client.async_register_access()
@@ -36,6 +39,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: TerceiraPonteConfigEntry
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: TerceiraPonteConfigEntry) -> bool:
+async def async_unload_entry(
+    hass: HomeAssistant, entry: TerceiraPonteConfigEntry
+) -> bool:
     """Unload a config entry."""
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)

@@ -1,5 +1,4 @@
 """Tests for the terceira_ponte config flow."""
-from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
@@ -11,10 +10,11 @@ from custom_components.terceira_ponte.const import (
     DEFAULT_CACHE_TTL_SECONDS,
     DOMAIN,
 )
+from homeassistant.core import HomeAssistant
 
 
 @pytest.mark.asyncio
-async def test_user_flow_creates_entry(hass) -> None:
+async def test_user_flow_creates_entry(hass: HomeAssistant) -> None:
     """The user flow should create a config entry after validation."""
     with patch(
         "custom_components.terceira_ponte.config_flow.TerceiraPonteClient.async_validate_connection",
@@ -37,7 +37,7 @@ async def test_user_flow_creates_entry(hass) -> None:
 
 
 @pytest.mark.asyncio
-async def test_options_flow_updates_cache_ttl(hass) -> None:
+async def test_options_flow_updates_cache_ttl(hass: HomeAssistant) -> None:
     """The options flow should persist the cache TTL value."""
     entry = MockConfigEntry(
         domain=DOMAIN,

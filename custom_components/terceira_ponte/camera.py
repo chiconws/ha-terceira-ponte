@@ -1,7 +1,6 @@
 """Camera platform for the terceira_ponte integration."""
-from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from homeassistant.components.camera import Camera
 from homeassistant.core import HomeAssistant
@@ -55,10 +54,12 @@ class TerceiraPonteCamera(Camera):
         self._attr_extra_state_attributes = {"camera_id": camera_id}
 
     @property
+    @override
     def available(self) -> bool:
         """Return whether the camera is available."""
         return self._client.is_available(self._camera_id)
 
+    @override
     async def async_camera_image(
         self,
         width: int | None = None,
