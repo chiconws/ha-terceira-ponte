@@ -1,10 +1,16 @@
 """Config flow for the terceira_ponte integration."""
-from __future__ import annotations
 
 import logging
+from typing import Any, override
 
 import probatio
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlowWithReload
+
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlowWithReload,
+)
 from homeassistant.core import callback
 from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -27,7 +33,10 @@ class TerceiraPonteConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(self, user_input: dict | None = None):
+    @override
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
         if user_input is not None:
@@ -45,11 +54,14 @@ class TerceiraPonteConfigFlow(ConfigFlow, domain=DOMAIN):
             else:
                 return self.async_create_entry(title=NAME, data={})
 
-        return self.async_show_form(step_id="user", data_schema=probatio.Schema({}), errors=errors)
+        return self.async_show_form(
+            step_id="user", data_schema=probatio.Schema({}), errors=errors
+        )
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry):
+    @override
+    def async_get_options_flow(config_entry: ConfigEntry) -> TerceiraPonteOptionsFlow:
         """Get the options flow for this handler."""
         return TerceiraPonteOptionsFlow()
 
@@ -57,7 +69,9 @@ class TerceiraPonteConfigFlow(ConfigFlow, domain=DOMAIN):
 class TerceiraPonteOptionsFlow(OptionsFlowWithReload):
     """Handle options flow for Terceira Ponte."""
 
-    async def async_step_init(self, user_input: dict | None = None):
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             return self.async_create_entry(data=user_input)

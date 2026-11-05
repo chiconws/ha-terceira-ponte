@@ -3,9 +3,6 @@
 import logging
 
 import pytest
-from homeassistant.config_entries import ConfigEntryState
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
 
@@ -18,25 +15,39 @@ from custom_components.terceira_ponte.const import (
     IMAGE_PATH_TEMPLATE,
     REGISTER_ACCESS_PATH,
 )
-from custom_components.terceira_ponte.diagnostics import async_get_config_entry_diagnostics
+from custom_components.terceira_ponte.diagnostics import (
+    async_get_config_entry_diagnostics,
+)
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 JPEG = b"\xff\xd8jpeg"
 
 
 @pytest.fixture(autouse=True)
-def no_retry_delay(monkeypatch):
+def no_retry_delay(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Do not wait between image retries."""
     monkeypatch.setattr(client_module, "IMAGE_FETCH_RETRY_DELAY_SECONDS", 0)
 
 
-def mock_service(aioclient_mock: AiohttpClientMocker, *, register_status: int = 200) -> None:
+def mock_service(
+    aioclient_mock: AiohttpClientMocker, *, register_status: int = 200
+) -> None:
+    """Mock the token, access-register and image endpoints."""
     aioclient_mock.get(f"{BASE_URL}{AUTH_TOKEN_PATH}", json={"token": "jwt"})
-    aioclient_mock.post(f"{BASE_URL}{REGISTER_ACCESS_PATH}", status=register_status, text="no")
+    aioclient_mock.post(
+        f"{BASE_URL}{REGISTER_ACCESS_PATH}", status=register_status, text="no"
+    )
     for camera_id in CAMERAS:
-        aioclient_mock.get(f"{BASE_URL}{IMAGE_PATH_TEMPLATE.format(camera_id=camera_id)}", content=JPEG)
+        aioclient_mock.get(
+            f"{BASE_URL}{IMAGE_PATH_TEMPLATE.format(camera_id=camera_id)}", content=JPEG
+        )
 
 
 @pytest.fixture
 def entry(hass: HomeAssistant) -> MockConfigEntry:
+    """Add a Terceira Ponte config entry."""
     entry = MockConfigEntry(domain=DOMAIN, data={}, title="Terceira Ponte")
     entry.add_to_hass(hass)
     return entry
@@ -44,8 +55,12 @@ def entry(hass: HomeAssistant) -> MockConfigEntry:
 
 @pytest.mark.parametrize("register_status", [200, 500])
 async def test_setup_unload_and_diagnostics(
-    hass: HomeAssistant, aioclient_mock, entry, register_status
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    entry: MockConfigEntry,
+    register_status: int,
 ) -> None:
+    """Test setup unload and diagnostics."""
     mock_service(aioclient_mock, register_status=register_status)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
@@ -59,29 +74,45 @@ async def test_setup_unload_and_diagnostics(
     assert entry.state is ConfigEntryState.NOT_LOADED
 
 
-async def test_service_down_retries_setup(hass: HomeAssistant, aioclient_mock, entry) -> None:
+async def test_service_down_retries_setup(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker, entry: MockConfigEntry
+) -> None:
+    """Test service down retries setup."""
     aioclient_mock.get(f"{BASE_URL}{AUTH_TOKEN_PATH}", status=503)
     await hass.config_entries.async_setup(entry.entry_id)
     assert entry.state is ConfigEntryState.SETUP_RETRY
 
 
-async def test_user_flow_errors(hass: HomeAssistant, aioclient_mock) -> None:
+async def test_user_flow_errors(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """Test user flow errors."""
     aioclient_mock.get(f"{BASE_URL}{AUTH_TOKEN_PATH}", status=503)
-    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": "user"}
+    )
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
     assert result["errors"] == {"base": "cannot_connect"}
 
 
-async def test_user_flow_unexpected_error(hass: HomeAssistant, aioclient_mock) -> None:
+async def test_user_flow_unexpected_error(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """Test user flow unexpected error."""
     aioclient_mock.get(f"{BASE_URL}{AUTH_TOKEN_PATH}", exc=ValueError("boom"))
-    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": "user"})
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": "user"}
+    )
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
     assert result["errors"] == {"base": "unknown"}
 
 
 async def test_unavailable_is_logged_once(
-    hass: HomeAssistant, aioclient_mock, caplog: pytest.LogCaptureFixture
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
+    """Test unavailable is logged once."""
     client = client_module.TerceiraPonteClient(
         async_get_clientsession(hass),
         cache_ttl_seconds=0,

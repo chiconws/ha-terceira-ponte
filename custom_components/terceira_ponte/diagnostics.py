@@ -1,7 +1,5 @@
 """Diagnostics: cache settings and which cameras answer. Nothing secret is stored."""
 
-from __future__ import annotations
-
 from typing import Any
 
 from homeassistant.core import HomeAssistant

@@ -1,6 +1,6 @@
 # Terceira Ponte
 
-[![HACS][badge-hacs]][link-hacs]
+[![Marketplace][badge-marketplace]][link-marketplace]
 [![GitHub Release][badge-release]][link-release]
 [![Home Assistant][badge-ha]][link-ha]
 [![GitHub Commit Activity][badge-commit-activity]][link-commits]
@@ -21,19 +21,21 @@ As quatro câmeras públicas da **Terceira Ponte** (Vitória–Vila Velha, ES) c
 
 ## Requisitos
 
-- Home Assistant 2026.10 ou mais recente
+- Home Assistant 2026.9 ou mais recente
 - Acesso à internet (o serviço `terceiraponte.ceturb.es.gov.br` é público e não pede conta)
 
 ## Instalação
 
-### HACS (recomendado)
+### Marketplace (recomendado)
 
-[![Abrir este repositório no HACS da sua instância do Home Assistant.][badge-my-hacs]][link-my-hacs]
+[![Abrir este repositório no Marketplace da sua instância do Home Assistant.][badge-my-marketplace]][link-my-marketplace]
 
-1. Clique no botão acima, ou abra **HACS → ⋮ → Repositórios personalizados** e adicione
-   `https://github.com/chiconws/ha-terceira-ponte` com o tipo **Integração**.
-2. Procure por **Terceira Ponte** no HACS e clique em **Baixar**.
+1. Clique no botão acima. Se o Home Assistant pedir, confirme a adição do repositório.
+2. Baixe **Terceira Ponte** em **Configurações → Marketplace**.
 3. Reinicie o Home Assistant.
+
+No Home Assistant 2026.10 ou anterior, use o HACS:
+[![Abrir este repositório no HACS da sua instância do Home Assistant.][badge-my-hacs]][link-my-hacs]
 
 ### Manual
 
@@ -119,12 +121,13 @@ Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalaçã
 
 ## Desenvolvimento
 
-Veja o [AGENTS.md](AGENTS.md) para a estrutura do código. Verificações rápidas:
+Veja o [CONTRIBUTING.md](CONTRIBUTING.md) para configurar o ambiente e o [AGENTS.md](AGENTS.md) para a estrutura do código. Verificações rápidas:
 
 ```bash
 uv venv --python 3.14 .venv && uv pip install -r requirements_test.txt
-python -m ruff check custom_components/terceira_ponte tests
-python -m pytest
+.venv/bin/prek install
+.venv/bin/prek run --all-files
+.venv/bin/pytest
 ```
 
 ## Créditos
@@ -135,18 +138,19 @@ Imagens públicas da CETURB-ES: <https://terceiraponte.ceturb.es.gov.br/>.
 
 MIT, veja [LICENSE](LICENSE).
 
-[badge-hacs]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg
+[badge-marketplace]: https://img.shields.io/badge/Marketplace-Custom-41BDF5.svg
 [badge-release]: https://img.shields.io/github/v/release/chiconws/ha-terceira-ponte
-[badge-ha]: https://img.shields.io/badge/Home%20Assistant-2026.10%2B-41BDF5?logo=home-assistant
+[badge-ha]: https://img.shields.io/badge/Home%20Assistant-2026.9%2B-41BDF5?logo=home-assistant
 [badge-commit-activity]: https://img.shields.io/github/commit-activity/m/chiconws/ha-terceira-ponte
 [badge-hacs-validation]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hacs.yaml/badge.svg
 [badge-hassfest]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hassfest.yaml/badge.svg
 [badge-tests]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/tests.yaml/badge.svg
 [badge-license]: https://img.shields.io/github/license/chiconws/ha-terceira-ponte
+[badge-my-marketplace]: https://my.home-assistant.io/badges/marketplace_repository.svg
 [badge-my-hacs]: https://my.home-assistant.io/badges/hacs_repository.svg
 [badge-my-config]: https://my.home-assistant.io/badges/config_flow_start.svg
 
-[link-hacs]: https://hacs.xyz/
+[link-marketplace]: https://www.home-assistant.io/integrations/marketplace/
 [link-release]: https://github.com/chiconws/ha-terceira-ponte/releases/latest
 [link-ha]: https://www.home-assistant.io/
 [link-commits]: https://github.com/chiconws/ha-terceira-ponte/commits/main
@@ -154,5 +158,6 @@ MIT, veja [LICENSE](LICENSE).
 [link-hassfest]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/hassfest.yaml
 [link-tests]: https://github.com/chiconws/ha-terceira-ponte/actions/workflows/tests.yaml
 [link-license]: LICENSE
+[link-my-marketplace]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=chiconws&repository=ha-terceira-ponte&category=integration
 [link-my-hacs]: https://my.home-assistant.io/redirect/hacs_repository/?owner=chiconws&repository=ha-terceira-ponte&category=integration
 [link-my-config]: https://my.home-assistant.io/redirect/config_flow_start/?domain=terceira_ponte

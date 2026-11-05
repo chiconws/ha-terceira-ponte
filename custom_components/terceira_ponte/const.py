@@ -1,5 +1,4 @@
 """Constants for the terceira_ponte integration."""
-from __future__ import annotations
 
 DOMAIN = "terceira_ponte"
 NAME = "Terceira Ponte"

@@ -1,10 +1,9 @@
 """HTTP client for the terceira_ponte integration."""
-from __future__ import annotations
 
 import asyncio
+from dataclasses import dataclass
 import logging
 import time
-from dataclasses import dataclass
 
 from aiohttp import ClientError, ClientSession
 
@@ -55,7 +54,10 @@ class TerceiraPonteClient:
         """Register public access in best-effort mode."""
         try:
             token = await self._async_get_token()
-            headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            }
             async with asyncio.timeout(REQUEST_TIMEOUT_SECONDS):
                 async with self._session.post(
                     f"{BASE_URL}{REGISTER_ACCESS_PATH}",
@@ -120,7 +122,9 @@ class TerceiraPonteClient:
 
             try:
                 async with asyncio.timeout(REQUEST_TIMEOUT_SECONDS):
-                    async with self._session.get(image_url, headers=headers) as response:
+                    async with self._session.get(
+                        image_url, headers=headers
+                    ) as response:
                         if response.status == 401 and not refreshed:
                             self._token = None
                             refreshed = True
@@ -139,7 +143,9 @@ class TerceiraPonteClient:
             attempt += 1
             if not transient or attempt >= IMAGE_FETCH_RETRY_ATTEMPTS:
                 raise error
-            _LOGGER.debug("Image request for camera %s failed, retrying: %s", camera_id, error)
+            _LOGGER.debug(
+                "Image request for camera %s failed, retrying: %s", camera_id, error
+            )
             await asyncio.sleep(IMAGE_FETCH_RETRY_DELAY_SECONDS)
 
     async def _async_get_token(self) -> str:
@@ -150,7 +156,9 @@ class TerceiraPonteClient:
 
             try:
                 async with asyncio.timeout(REQUEST_TIMEOUT_SECONDS):
-                    async with self._session.get(f"{BASE_URL}{AUTH_TOKEN_PATH}") as response:
+                    async with self._session.get(
+                        f"{BASE_URL}{AUTH_TOKEN_PATH}"
+                    ) as response:
                         response.raise_for_status()
                         payload = await response.json()
             except (ClientError, TimeoutError) as err:

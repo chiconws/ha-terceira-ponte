@@ -1,19 +1,19 @@
 """Tests for integration setup."""
-from __future__ import annotations
 
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from homeassistant.exceptions import ConfigEntryNotReady
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.terceira_ponte import async_setup_entry
 from custom_components.terceira_ponte.client import TerceiraPonteError
 from custom_components.terceira_ponte.const import DOMAIN
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 
 
 @pytest.mark.asyncio
-async def test_setup_entry_raises_when_validation_fails(hass) -> None:
+async def test_setup_entry_raises_when_validation_fails(hass: HomeAssistant) -> None:
     """Setup should raise ConfigEntryNotReady when validation fails."""
     entry = MockConfigEntry(domain=DOMAIN, data={}, title="Terceira Ponte")
     entry.add_to_hass(hass)
