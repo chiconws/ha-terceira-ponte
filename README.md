@@ -121,14 +121,7 @@ Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalaçã
 
 ## Desenvolvimento
 
-Veja o [CONTRIBUTING.md](CONTRIBUTING.md) para configurar o ambiente e o [AGENTS.md](AGENTS.md) para a estrutura do código. Verificações rápidas:
-
-```bash
-uv venv --python 3.14 .venv && uv pip install -r requirements_test.txt
-.venv/bin/prek install
-.venv/bin/prek run --all-files
-.venv/bin/pytest
-```
+Veja o [CONTRIBUTING.md](CONTRIBUTING.md) para configurar o ambiente, rodar as verificações e os testes, e o [AGENTS.md](AGENTS.md) para a estrutura do código.
 
 ## Créditos
 
