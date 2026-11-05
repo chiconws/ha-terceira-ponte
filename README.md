@@ -34,7 +34,7 @@ As quatro câmeras públicas da **Terceira Ponte** (Vitória–Vila Velha, ES) c
 2. Baixe **Terceira Ponte** em **Configurações → Marketplace**.
 3. Reinicie o Home Assistant.
 
-No Home Assistant 2026.10 ou anterior, use o HACS:
+No Home Assistant 2026.10 ou anterior, instale o [HACS](https://hacs.xyz/) antes e use:
 [![Abrir este repositório no HACS da sua instância do Home Assistant.][badge-my-hacs]][link-my-hacs]
 
 ### Manual
