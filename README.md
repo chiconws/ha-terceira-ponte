@@ -45,6 +45,16 @@ Depois baixe **Terceira Ponte** no HACS e reinicie o Home Assistant.
    configuração do Home Assistant.
 3. Reinicie o Home Assistant.
 
+### Atualizando da v2.x
+
+A v3.0 trocou o domínio da integração de `ha_terceira_ponte` para `terceira_ponte`.
+O Home Assistant não move uma entrada entre domínios, então:
+
+1. Exclua a entrada antiga **Terceira Ponte** em **Configurações → Dispositivos e serviços**
+   antes de atualizar (assim as novas entidades ficam com os mesmos IDs).
+2. Apague a pasta `custom_components/ha_terceira_ponte`.
+3. Instale a versão atual, reinicie o Home Assistant e adicione a integração de novo.
+
 ## Configuração
 
 [![Configurar Terceira Ponte na sua instância do Home Assistant.][badge-my-config]][link-my-config]
