@@ -52,6 +52,9 @@ class TerceiraPonteCamera(Camera):
         self._attr_name = name
         self._attr_content_type = "image/jpeg"
         self._attr_extra_state_attributes = {"camera_id": camera_id}
+        # Availability last written to the state machine; overlapping fetches
+        # serialize in the client, so compare against this, not a value read earlier.
+        self._published_available = client.is_available(camera_id)
 
     @property
     @override
@@ -66,9 +69,9 @@ class TerceiraPonteCamera(Camera):
         height: int | None = None,
     ) -> bytes | None:
         """Return a camera image, writing state only when availability flips."""
-        was_available = self.available
         try:
             return await self._client.async_get_camera_image(self._camera_id)
         finally:
-            if self.hass is not None and self.available != was_available:
+            if self.hass is not None and self.available != self._published_available:
+                self._published_available = self.available
                 self.async_write_ha_state()

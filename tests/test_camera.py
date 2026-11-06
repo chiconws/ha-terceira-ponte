@@ -43,3 +43,20 @@ async def test_camera_setup_creates_four_entities(hass: HomeAssistant) -> None:
 
     first_image = await added_entities[0].async_camera_image()
     assert first_image == next(iter(CAMERAS)).encode("utf-8")
+
+
+async def test_camera_writes_recovery_after_overlapping_fetch(
+    hass: HomeAssistant,
+) -> None:
+    """A success after another fetch marked the camera unavailable is written."""
+    client = FakeClient()
+    entity = camera_platform.TerceiraPonteCamera(client, next(iter(CAMERAS)), "Cam")  # type: ignore[arg-type] # fake client
+    entity.hass = hass
+    writes: list[bool] = []
+    entity.async_write_ha_state = lambda: writes.append(entity.available)  # type: ignore[method-assign] # record writes
+    # The overlapping fetch already published "unavailable"; this one succeeds.
+    entity._published_available = False  # noqa: SLF001
+    await entity.async_camera_image()
+    assert writes == [True]
+    await entity.async_camera_image()
+    assert writes == [True]

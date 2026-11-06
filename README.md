@@ -45,6 +45,17 @@ Depois baixe **Terceira Ponte** no HACS e reinicie o Home Assistant.
    configuração do Home Assistant.
 3. Reinicie o Home Assistant.
 
+### Atualizando da v2.x
+
+A v3.0 trocou o domínio da integração de `ha_terceira_ponte` para `terceira_ponte`.
+O Home Assistant não move uma entrada entre domínios, então:
+
+1. Anote os IDs das entidades que seus painéis e automações usam e exclua a entrada
+   antiga **Terceira Ponte** em **Configurações → Dispositivos e serviços**.
+2. Apague a pasta `custom_components/ha_terceira_ponte`.
+3. Instale a versão atual, reinicie o Home Assistant e adicione a integração de novo;
+   renomeie as entidades novas para os IDs anotados, se mudaram.
+
 ## Configuração
 
 [![Configurar Terceira Ponte na sua instância do Home Assistant.][badge-my-config]][link-my-config]
@@ -119,6 +130,13 @@ Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalaçã
 
 - O feed é snapshot JPEG, não vídeo.
 - Depende do serviço público da CETURB-ES, sem contrato documentado de atualização.
+
+## Remoção
+
+1. Vá em **Configurações → Dispositivos e serviços → Terceira Ponte**, abra ⋮ e selecione **Excluir**.
+2. Remova em **Configurações → Marketplace** (ou no HACS), ou apague
+   `custom_components/terceira_ponte` se instalou manualmente.
+3. Reinicie o Home Assistant.
 
 ## Desenvolvimento
 
