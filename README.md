@@ -120,6 +120,13 @@ Ajuste o `entity_id` da câmera e o serviço `notify` para os da sua instalaçã
 - O feed é snapshot JPEG, não vídeo.
 - Depende do serviço público da CETURB-ES, sem contrato documentado de atualização.
 
+## Remoção
+
+1. Vá em **Configurações → Dispositivos e serviços → Terceira Ponte**, abra ⋮ e selecione **Excluir**.
+2. Remova em **Configurações → Marketplace** (ou no HACS), ou apague
+   `custom_components/terceira_ponte` se instalou manualmente.
+3. Reinicie o Home Assistant.
+
 ## Desenvolvimento
 
 Veja o [CONTRIBUTING.md](CONTRIBUTING.md) para configurar o ambiente, rodar as verificações e os testes, e o [AGENTS.md](AGENTS.md) para a estrutura do código.
